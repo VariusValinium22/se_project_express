@@ -9,7 +9,7 @@ const getItems = (req, res) => {
     });
 };
 
-const getItem = (req, res) => {
+/* const getItem = (req, res) => {
   const { itemId } = req.params;
   Item.findById(itemId)
     .orFail()
@@ -23,7 +23,7 @@ const getItem = (req, res) => {
       }
       return res.status(500).send({ message: err.message });
     });
-}
+} */
 
 const createItem = (req, res) => {
   const { name, weather, imageUrl } = req.body;
@@ -59,4 +59,4 @@ const deleteItem = (req,res) => {
     })
 };
 
-module.exports = { getItems, getItem, createItem, deleteItem };
+module.exports = { getItems, createItem, deleteItem };

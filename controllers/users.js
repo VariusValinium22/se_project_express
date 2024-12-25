@@ -46,7 +46,7 @@ const createUser = (req, res) => {
     });
 };
 
-const deleteUser = (req,res) => {
+/* const deleteUser = (req,res) => {
   const { userId } = req.params;
   User.findByIdAndDelete(userId)
     .orFail()
@@ -63,7 +63,7 @@ const deleteUser = (req,res) => {
       }
       return res.status(500).send({ message: err.message });
     })
-};
+}; */
 
 
-module.exports = { getUsers, getUser, createUser, deleteUser };
+module.exports = { getUsers, getUser, createUser };
