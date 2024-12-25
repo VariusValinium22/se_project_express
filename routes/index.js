@@ -4,7 +4,7 @@ const userRouter = require("./users");
 const itemRouter = require("./clothingItems");
 
 router.use("/users", userRouter);
-router.use("/clothingItems", itemRouter);
+router.use("/items", itemRouter);
 
 // catch-all for non-existent resources
 router.use((req, res) => {
