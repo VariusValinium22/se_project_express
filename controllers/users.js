@@ -9,11 +9,13 @@ const getUsers = (req, res) => {
     })
     .catch((err) => {
       console.error(err);
-      return res.status(Errors.INTERNAL_SERVER_ERROR.code).send({ message: Errors.INTERNAL_SERVER_ERROR.message });
+      return res
+        .status(Errors.INTERNAL_SERVER_ERROR.code)
+        .send({ message: Errors.INTERNAL_SERVER_ERROR.message });
     });
 };
 
-const getUser  = (req, res) => {
+const getUser = (req, res) => {
   const { userId } = req.params;
   User.findById(userId)
     .orFail()
@@ -24,11 +26,18 @@ const getUser  = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        return res.status(Errors.NOT_FOUND.code).send({ message: Errors.NOT_FOUND.message });
-      } if (err.name === "CastError") {
-        return res.status(Errors.BAD_REQUEST.code).send({ message: Errors.BAD_REQUEST.message });
+        return res
+          .status(Errors.NOT_FOUND.code)
+          .send({ message: Errors.NOT_FOUND.message });
       }
-      return res.status(Errors.INTERNAL_SERVER_ERROR.code).send({ message: Errors.INTERNAL_SERVER_ERROR.message });
+      if (err.name === "CastError") {
+        return res
+          .status(Errors.BAD_REQUEST.code)
+          .send({ message: Errors.BAD_REQUEST.message });
+      }
+      return res
+        .status(Errors.INTERNAL_SERVER_ERROR.code)
+        .send({ message: Errors.INTERNAL_SERVER_ERROR.message });
     });
 };
 
@@ -41,30 +50,14 @@ const createUser = (req, res) => {
       console.error(err);
       console.log("Name of Error: ", err.name);
       if (err.name === "ValidationError") {
-        return res.status(Errors.VALIDATION_ERROR.code).send({ message: Errors.VALIDATION_ERROR.message });
+        return res
+          .status(Errors.VALIDATION_ERROR.code)
+          .send({ message: Errors.VALIDATION_ERROR.message });
       }
-      return res.status(Errors.INTERNAL_SERVER_ERROR.code).send({ message: Errors.INTERNAL_SERVER_ERROR.message });
+      return res
+        .status(Errors.INTERNAL_SERVER_ERROR.code)
+        .send({ message: Errors.INTERNAL_SERVER_ERROR.message });
     });
 };
-
-/* const deleteUser = (req,res) => {
-  const { userId } = req.params;
-  User.findByIdAndDelete(userId)
-    .orFail()
-    .then((user) => {
-      console.log("User has been DELETED:", user);
-      res.status(200).send({ message: "User has been deleted", user })
-    })
-    .catch((err) => {
-      console.error(err);
-      if (err.name === "DocumentNotFoundError") {
-        return res.status(404).send({ message: err.message });
-      } else if (err.name === "CastError") {
-        return res.status(400).send({ message: err.message });
-      }
-      return res.status(500).send({ message: err.message });
-    })
-}; */
-
 
 module.exports = { getUsers, getUser, createUser };
