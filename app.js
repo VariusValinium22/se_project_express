@@ -15,13 +15,6 @@ mongoose
 
 app.use(express.json());
 
-// TODO: to be removed once login/authentication is implemented
-// Mock a user for POST Add an Item
-app.use((req, res, next) => {
-  req.user = { _id: "6765a6944882aba552ef7ea5" };
-  next();
-});
-
 app.use("/", mainRouter);
 
 app.listen(PORT, () => {
