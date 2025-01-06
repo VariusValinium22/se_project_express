@@ -1,14 +1,15 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const validator = require("validator");
 const User = require("../models/user");
 const Errors = require("../utils/errors");
 const { JWT_SECRET } = require("../utils/config");
+
 /* const { update } = require("../models/clothingItem"); */
 
 const getUsers = (req, res) => {
   User.find({})
     .then((users) => {
-      /* console.log("All Users:", users); */
       res.status(200).send(users);
     })
     .catch((err) => {
@@ -19,12 +20,11 @@ const getUsers = (req, res) => {
     });
 };
 
-const getUser = (req, res) => {
-  const { userId } = req.params;
+const getCurrentUser = (req, res) => {
+  const userId = req.user._id;
   User.findById(userId)
     .orFail()
     .then((user) => {
-      /* console.log("Found User:", user); */
       res.status(200).send(user);
     })
     .catch((err) => {
@@ -46,43 +46,84 @@ const getUser = (req, res) => {
 };
 
 const createUser = (req, res) => {
-  const { name, avatar, email, password } = req.body;
-  console.log("Request Body:", req.body);
-  if (!name || !avatar || !email || !password) {
-    return res.status(400).send({
-      message: "missing fields",
-    });
-  }
+  try {
+    console.log("Request body:", req.body);
+    const { name, avatar, email, password } = req.body;
 
-  console.log("Request Body of createUser:", req.body);
-  bcrypt
-    .hash(password, 10)
-    .then((hashedPassword) =>
-      User.create({ name, avatar, email, password: hashedPassword })
-    )
-    .then((user) =>
-      res.status(201).send({
-        name: user.name,
-        avatar: user.avatar,
-        email: user.email,
-        _id: user._id,
+    if (!name || !avatar || !email || !password) {
+      res.status(400).send({ message: "missing fields" });
+      return;
+    }
+
+    if (name.length < 2 || name.length > 30) {
+      const message =
+        name.length < 2
+          ? "Name must be at least 2 characters"
+          : "Name must be less than 30 characters";
+      res.status(400).send({ message });
+      return;
+    }
+
+    if (!validator.isURL(avatar)) {
+      res.status(400).send({ message: "Invalid URL in avatar field" });
+      return;
+    }
+
+    if (!validator.isEmail(email)) {
+      res.status(400).send({ message: "Invalid email address" });
+      return;
+    }
+
+    User.findOne({ email })
+      .then((existingUser) => {
+        if (existingUser) {
+          return res.status(409).send({ message: "Email already exists" });
+        }
+
+        return bcrypt.hash(password, 10);
       })
-    )
-    .catch((err) => {
-      console.error(err);
-      console.log("Name of Error: ", err.name);
-      if (err.name === "ValidationError") {
-        return res
-          .status(Errors.VALIDATION_ERROR.code)
-          .send({ message: Errors.VALIDATION_ERROR.message });
-      }
-      if (err.code === 11000) {
-        return res.status(409).send({ message: "Email already exists" });
-      }
-      return res
-        .status(Errors.INTERNAL_SERVER_ERROR.code)
-        .send({ message: Errors.INTERNAL_SERVER_ERROR.message });
-    });
+      .then((hashedPassword) => {
+        if (!hashedPassword) return;
+
+        return User.create({ name, avatar, email, password: hashedPassword });
+      })
+      .then((user) => {
+        console.log("User Created:", user);
+        if (user) {
+          res.status(201).send({
+            name: user.name,
+            avatar: user.avatar,
+            email: user.email,
+            _id: user._id,
+          });
+        }
+      })
+      .catch((err) => {
+        console.error("Error occurred in Add User request:", err);
+
+        if (err.name === "ValidationError") {
+          res
+            .status(Errors.VALIDATION_ERROR.code)
+            .send({ message: Errors.VALIDATION_ERROR.message });
+          return;
+        }
+
+        if (err.code === 11000) {
+          res.status(409).send({ message: "Email already exists" });
+          console.log(res.message);
+          return;
+        }
+
+        res
+          .status(Errors.INTERNAL_SERVER_ERROR.code)
+          .send({ message: Errors.INTERNAL_SERVER_ERROR.message });
+      });
+  } catch (err) {
+    console.error("Unexpected error:", err);
+    res
+      .status(Errors.INTERNAL_SERVER_ERROR.code)
+      .send({ message: Errors.INTERNAL_SERVER_ERROR.message });
+  }
 };
 
 const updateUser = (req, res) => {
@@ -90,9 +131,10 @@ const updateUser = (req, res) => {
   const { name, avatar } = req.body;
 
   if (!name || !avatar) {
-    return res.status(400).send({
+    res.status(400).send({
       message: "Name and avatar fields are required",
     });
+    return;
   }
 
   User.findByIdAndUpdate(
@@ -102,25 +144,28 @@ const updateUser = (req, res) => {
   )
     .then((user) => {
       if (!user) {
-        return res
+        res
           .status(Errors.NOT_FOUND.code)
           .send({ message: Errors.NOT_FOUND.message });
+        return;
       }
-      return res.status(200).send(user);
+      res.status(200).send(user);
     })
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
-        return res
+        res
           .status(Errors.VALIDATION_ERROR.code)
           .send({ message: Errors.VALIDATION_ERROR.message });
+        return;
       }
       if (err.name === "CastError") {
-        return res
+        res
           .status(Errors.BAD_REQUEST.code)
           .send({ message: Errors.BAD_REQUEST.message });
+        return;
       }
-      return res
+      res
         .status(Errors.INTERNAL_SERVER_ERROR.code)
         .send({ message: Errors.INTERNAL_SERVER_ERROR.message });
     });
@@ -128,8 +173,6 @@ const updateUser = (req, res) => {
 
 const login = (req, res) => {
   const { email, password } = req.body;
-  console.log("Request Body of login:", req.body);
-
   if (!email || !password) {
     return res.status(400).send({ message: "Email and password are required" });
   }
@@ -146,4 +189,4 @@ const login = (req, res) => {
     });
 };
 
-module.exports = { getUsers, getUser, createUser, login, updateUser };
+module.exports = { getUsers, getCurrentUser, createUser, login, updateUser };
