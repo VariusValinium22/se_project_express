@@ -24,6 +24,7 @@ const getCurrentUser = (req, res) => {
   const userId = req.user._id;
   User.findById(userId)
     .orFail()
+    .select('-password')
     .then((user) => {
       res.status(200).send(user);
     })
@@ -77,13 +78,14 @@ const createUser = (req, res) => {
     User.findOne({ email })
       .then((existingUser) => {
         if (existingUser) {
-          return res.status(409).send({ message: "Email already exists" });
+          const error = new Error("Email already exists");
+          error.code = 11000;
+          throw error;
         }
-
         return bcrypt.hash(password, 10);
       })
       .then((hashedPassword) => {
-        if (!hashedPassword) return;
+        if (!hashedPassword) return null;
 
         return User.create({ name, avatar, email, password: hashedPassword });
       })

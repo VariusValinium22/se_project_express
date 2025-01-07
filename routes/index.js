@@ -10,7 +10,7 @@ router.post("/signup", createUser);
 router.post("/signin", login);
 
 router.use("/users", authorize, userRouter);
-router.get("users/me", authorize, getCurrentUser);
+router.get("/users/me", authorize, getCurrentUser);
 
 router.patch("/me", authorize, updateUser);
 router.use("/items", itemRouter);
