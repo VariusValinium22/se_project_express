@@ -13,6 +13,7 @@ const authorize = (req, res, next) => {
   try {
     const payload = jwt.verify(token, JWT_SECRET);
     req.user = payload;
+    console.log(req.user);
     return next();
   } catch (err) {
     return res.status(401).send({ message: 'Invalid Token'});

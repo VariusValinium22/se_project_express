@@ -11,8 +11,8 @@ router.post("/signin", login);
 
 router.use("/users", authorize, userRouter);
 router.get("/users/me", authorize, getCurrentUser);
+router.patch("/users/me", authorize, updateUser);
 
-router.patch("/me", authorize, updateUser);
 router.use("/items", itemRouter);
 
 // catch-all for non-existent resources

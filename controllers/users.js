@@ -48,7 +48,6 @@ const getCurrentUser = (req, res) => {
 
 const createUser = (req, res) => {
   try {
-    console.log("Request body:", req.body);
     const { name, avatar, email, password } = req.body;
 
     if (!name || !avatar || !email || !password) {
@@ -90,14 +89,10 @@ const createUser = (req, res) => {
         return User.create({ name, avatar, email, password: hashedPassword });
       })
       .then((user) => {
-        console.log("User Created:", user);
         if (user) {
-          res.status(201).send({
-            name: user.name,
-            avatar: user.avatar,
-            email: user.email,
-            _id: user._id,
-          });
+          const userObject = user.toObject();
+          delete userObject.password;
+          res.status(201).send(userObject);
         }
       })
       .catch((err) => {
@@ -112,7 +107,6 @@ const createUser = (req, res) => {
 
         if (err.code === 11000) {
           res.status(409).send({ message: "Email already exists" });
-          console.log(res.message);
           return;
         }
 
@@ -129,7 +123,7 @@ const createUser = (req, res) => {
 };
 
 const updateUser = (req, res) => {
-  const { userId } = req.params;
+  const userId = req.user._id;
   const { name, avatar } = req.body;
 
   if (!name || !avatar) {
@@ -144,6 +138,7 @@ const updateUser = (req, res) => {
     { name, avatar },
     { new: true, runValidators: true }
   )
+    .select('-password')
     .then((user) => {
       if (!user) {
         res

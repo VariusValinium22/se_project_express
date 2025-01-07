@@ -33,10 +33,49 @@ const createItem = (req, res) => {
 
 const deleteItem = (req, res) => {
   const { itemId } = req.params;
-  Item.findByIdAndDelete(itemId)
+  const userId = req.user?._id;
+
+  console.log("Delete request recieved for Item Id", itemId );
+  console.log("Logged in User ID", userId );
+
+  if (!itemId) {
+    console.log("Item ID is missing in the request");
+    res
+      .status(400)
+      .send({ message: "Item ID is required in the request parameters"});
+      return;
+  }
+
+  if (!userId) {
+    console.log("User ID is missing or invalid in the request");
+    res
+      .status(403)
+      .send({ message: "Unauthorized. User ID is missing or invalid" });
+      return;
+  }
+
+  Item.findById(itemId)
     .orFail()
     .then((item) => {
-      res.status(200).send({ message: "Item has been deleted", item });
+      console.log("Item found:", item);
+      if (item.owner.equals(userId)) {
+        console.log("Forbidden: User does not own this item");
+        return res
+          .status(403)
+          .send({ message: Errors.FORBIDDEN_ERROR.message });
+      }
+      console.log("Authorized to delete item:", itemId);
+      return Item.findByIdAndDelete(itemId);
+    })
+    .then((deletedItem) => {
+      if (!deletedItem) {
+        console.log("Item not found or already deleted");
+        return res
+        .status(404)
+        .send({ message: "Item not found or could not be deleted." });
+      }
+      console.log("Item deleted successfully:", deletedItem);
+      return res.status(200).send({ message: "Item has been deleted", deleteItem });
     })
     .catch((err) => {
       console.error(err);
