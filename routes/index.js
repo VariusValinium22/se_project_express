@@ -4,15 +4,12 @@ const { authorize } = require("../middlewares/auth");
 
 const userRouter = require("./users");
 const itemRouter = require("./clothingItems");
-const { getCurrentUser, createUser, updateUser, login } = require("../controllers/users");
+const { createUser, login } = require("../controllers/users");
 
 router.post("/signup", createUser);
 router.post("/signin", login);
 
 router.use("/users", authorize, userRouter);
-router.get("/users/me", authorize, getCurrentUser);
-router.patch("/users/me", authorize, updateUser);
-
 router.use("/items", itemRouter);
 
 // catch-all for non-existent resources
