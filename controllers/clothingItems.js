@@ -37,15 +37,8 @@ const deleteItem = (req, res) => {
 
   if (!itemId) {
     res
-      .status(400)
-      .send({ message: "Item ID is required in the request parameters" });
-    return;
-  }
-
-  if (!userId) {
-    res
-      .status(403)
-      .send({ message: "Unauthorized. User ID is missing or invalid" });
+      .status(Errors.BAD_REQUEST.code)
+      .send({ message: Errors.BAD_REQUEST.message });
     return;
   }
 
@@ -54,21 +47,22 @@ const deleteItem = (req, res) => {
     .then((item) => {
       if (!item.owner.equals(userId)) {
         return res
-          .status(403)
+          .status(Errors.FORBIDDEN_ERROR.code)
           .send({ message: Errors.FORBIDDEN_ERROR.message });
       }
-      return Item.findByIdAndDelete(itemId);
-    })
-    .then((deletedItem) => {
-      if (!deletedItem) {
+
+      return Item.findByIdAndDelete(itemId).then((deletedItem) => {
+        if (!deletedItem) {
+          return res
+            .status(Errors.NOT_FOUND.code)
+            .send({ message: Errors.NOT_FOUND.message });
+        }
         return res
-          .status(404)
-          .send({ message: "Item not found or could not be deleted." });
-      }
-      return res
-        .status(200)
-        .send({ message: "Item has been deleted", deleteItem });
+          .status(200)
+          .send({ message: "Item has been deleted", deleteItem });
+      });
     })
+
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {

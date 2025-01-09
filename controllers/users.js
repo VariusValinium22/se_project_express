@@ -7,26 +7,8 @@ const { JWT_SECRET } = require("../utils/config");
 
 /* const { update } = require("../models/clothingItem"); */
 
-const getUsers = (req, res) => {
-  User.find({})
-    .then((users) => {
-      res.status(200).send(users);
-    })
-    .catch((err) => {
-      console.error(err);
-      return res
-        .status(Errors.INTERNAL_SERVER_ERROR.code)
-        .send({ message: Errors.INTERNAL_SERVER_ERROR.message });
-    });
-};
-
 const getCurrentUser = (req, res) => {
   const userId = req.user?._id;
-  if (!userId) {
-    return res
-      .status(401)
-      .send({ message: Errors.AUTHORIZATION_ERROR.message });
-  }
   return User.findById(userId)
     .orFail()
     .select("-password")
@@ -56,26 +38,23 @@ const createUser = (req, res) => {
     const { name, avatar, email, password } = req.body;
 
     if (!name || !avatar || !email || !password) {
-      res.status(400).send({ message: "missing fields" });
-      return;
-    }
-
-    if (name.length < 2 || name.length > 30) {
-      const message =
-        name.length < 2
-          ? "Name must be at least 2 characters"
-          : "Name must be less than 30 characters";
-      res.status(400).send({ message });
+      res
+        .status(Errors.BAD_REQUEST.code)
+        .send({ message: Errors.BAD_REQUEST.message });
       return;
     }
 
     if (!validator.isURL(avatar)) {
-      res.status(400).send({ message: "Invalid URL in avatar field" });
+      res
+        .status(Errors.VALIDATION_ERROR.code)
+        .send({ message: Errors.VALIDATION_ERROR.message });
       return;
     }
 
     if (!validator.isEmail(email)) {
-      res.status(400).send({ message: "Invalid email address" });
+      res
+        .status(Errors.VALIDATION_ERROR.code)
+        .send({ message: Errors.VALIDATION_ERROR.message });
       return;
     }
 
@@ -111,7 +90,9 @@ const createUser = (req, res) => {
         }
 
         if (err.code === 11000) {
-          res.status(409).send({ message: "Email already exists" });
+          res
+            .status(Errors.CONFLICT.code)
+            .send({ message: Errors.CONFLICT.message });
           return;
         }
 
@@ -132,8 +113,8 @@ const updateUser = (req, res) => {
   const { name, avatar } = req.body;
 
   if (!name || !avatar) {
-    res.status(400).send({
-      message: "Name and avatar fields are required",
+    res.status(Errors.BAD_REQUEST.code).send({
+      message: Errors.BAD_REQUEST.message,
     });
     return;
   }
@@ -176,7 +157,9 @@ const updateUser = (req, res) => {
 const login = (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
-    return res.status(400).send({ message: "Email and password are required" });
+    return res
+      .status(Errors.BAD_REQUEST.code)
+      .send({ message: Errors.BAD_REQUEST.message });
   }
 
   return User.findUserByCredentials(email, password)
@@ -187,8 +170,12 @@ const login = (req, res) => {
       res.send({ token });
     })
     .catch((err) => {
-      res.status(401).send({ message: err.message });
+      if (err.message === "Incorrect email or password") {
+        res
+          .status(Errors.INTERNAL_SERVER_ERROR.code)
+          .send({ message: Errors.INTERNAL_SERVER_ERROR.message });
+      }
     });
 };
 
-module.exports = { getUsers, getCurrentUser, createUser, login, updateUser };
+module.exports = { getCurrentUser, createUser, login, updateUser };
