@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const mainRouter = require("./routes/index");
+const cors = require("cors");
 
 const app = express();
 
@@ -14,6 +15,11 @@ mongoose
   .catch(console.error);
 
 app.use(express.json());
+app.use(cors());
+app.use((req, res, next) => {
+  console.log(`CORS middleware applied to ${req.method} request to ${req.url}`);
+  next();
+});
 
 app.use("/", mainRouter);
 

@@ -21,18 +21,14 @@ const getUsers = (req, res) => {
 };
 
 const getCurrentUser = (req, res) => {
-  console.log("req.user:", req.user);
   const userId = req.user?._id;
-
   if (!userId) {
     return res.status(401).send({ message: Errors.AUTHORIZATION_ERROR.message });
   }
-  console.log(userId);
   return User.findById(userId)
     .orFail()
     .select('-password')
     .then((user) => {
-      console.log("user Found: ", user);
       res.status(200).send(user);
     })
     .catch((err) => {
@@ -134,7 +130,6 @@ const createUser = (req, res) => {
 
 const updateUser = (req, res) => {
   const userId = req.user._id;
-  console.log("Updating user with ID: ", userId);
   const { name, avatar } = req.body;
 
   if (!name || !avatar) {
