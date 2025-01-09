@@ -38,15 +38,15 @@ const deleteItem = (req, res) => {
   if (!itemId) {
     res
       .status(400)
-      .send({ message: "Item ID is required in the request parameters"});
-      return;
+      .send({ message: "Item ID is required in the request parameters" });
+    return;
   }
 
   if (!userId) {
     res
       .status(403)
       .send({ message: "Unauthorized. User ID is missing or invalid" });
-      return;
+    return;
   }
 
   Item.findById(itemId)
@@ -62,10 +62,12 @@ const deleteItem = (req, res) => {
     .then((deletedItem) => {
       if (!deletedItem) {
         return res
-        .status(404)
-        .send({ message: "Item not found or could not be deleted." });
+          .status(404)
+          .send({ message: "Item not found or could not be deleted." });
       }
-      return res.status(200).send({ message: "Item has been deleted", deleteItem });
+      return res
+        .status(200)
+        .send({ message: "Item has been deleted", deleteItem });
     })
     .catch((err) => {
       console.error(err);

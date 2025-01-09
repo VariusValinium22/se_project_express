@@ -23,11 +23,13 @@ const getUsers = (req, res) => {
 const getCurrentUser = (req, res) => {
   const userId = req.user?._id;
   if (!userId) {
-    return res.status(401).send({ message: Errors.AUTHORIZATION_ERROR.message });
+    return res
+      .status(401)
+      .send({ message: Errors.AUTHORIZATION_ERROR.message });
   }
   return User.findById(userId)
     .orFail()
-    .select('-password')
+    .select("-password")
     .then((user) => {
       res.status(200).send(user);
     })
@@ -37,18 +39,15 @@ const getCurrentUser = (req, res) => {
         return res
           .status(Errors.NOT_FOUND.code)
           .send({ message: Errors.NOT_FOUND.message });
-
       }
       if (err.name === "CastError") {
         return res
           .status(Errors.BAD_REQUEST.code)
           .send({ message: Errors.BAD_REQUEST.message });
-
       }
       return res
         .status(Errors.INTERNAL_SERVER_ERROR.code)
         .send({ message: Errors.INTERNAL_SERVER_ERROR.message });
-
     });
 };
 
@@ -144,7 +143,7 @@ const updateUser = (req, res) => {
     { name, avatar },
     { new: true, runValidators: true }
   )
-    .select('-password')
+    .select("-password")
     .then((user) => {
       if (!user) {
         res

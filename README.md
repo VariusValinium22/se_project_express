@@ -15,6 +15,8 @@ se_project_express
 **Description:**
 This is a backend project built in association with the frontend project **_se_project_react_** for the WTWR application.
 
+Sprint 12:
+
 - utilized databases with MongoDB, set up security and testing, and deployed the web Application onto a remote machine.
 - created a server and routes for an API.
 - implemented user authorization.
@@ -32,7 +34,25 @@ There are two models, controllers and routes:
   - GET /items
   - POST /items
   - DELETE /items/:id
-  - PUT /items/:id/likes
-  - DELETE /items/:id/likes
+  - PUT /items:id/likes
+  - DELETE /items:id/likes
 
-**Technologies:** Node.js; Express.js; Mongoose; MongoDB; ESLint; Validator; Custom Middleware; Nodemon; Postman; Github Actions;
+Sprint 13:
+
+- Validation: expanded the userSchema to include email and password. Enabled validator.
+  -Created login controller
+- added /signin and /signup routes and controllers
+- created middlewares/auth.js file for Authorization
+- hide the password with .select('+password')
+- added the user NOT to be able to delete items added by other users in deleteItems
+
+Added API Endpoints:
+
+- users.js API Endpoints:
+  - GET /me (changed from GET /users)
+  - PATCH /me
+- clothingItems.js API Endpoints:
+  - POST /
+  - DELETE /:itemId
+
+**Technologies:** Node.js; Express.js; Mongoose; MongoDB; ESLint; Validator; Custom Middleware; Nodemon; Postman; Github Actions; CORS;

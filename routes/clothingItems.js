@@ -5,11 +5,10 @@ const {
   createItem,
   deleteItem,
   likeItem,
-  dislikeItem
+  dislikeItem,
 } = require("../controllers/clothingItems");
 
 router.get("/", getItems);
-/* router.get("/:itemId", getItem); */
 router.post("/", authorize, createItem);
 router.delete("/:itemId", authorize, deleteItem);
 
