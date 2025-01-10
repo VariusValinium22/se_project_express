@@ -171,10 +171,13 @@ const login = (req, res) => {
     })
     .catch((err) => {
       if (err.message === "Incorrect email or password") {
-        res
-          .status(Errors.INTERNAL_SERVER_ERROR.code)
-          .send({ message: Errors.INTERNAL_SERVER_ERROR.message });
+        return res
+          .status(Errors.AUTHORIZATION_ERROR.code)
+          .send({ message: Errors.AUTHORIZATION_ERROR.message });
       }
+      return res
+        .status(Errors.INTERNAL_SERVER_ERROR.code)
+        .send({ message: Errors.INTERNAL_SERVER_ERROR.message });
     });
 };
 
