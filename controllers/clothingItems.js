@@ -3,7 +3,6 @@ const Errors = require("../utils/errors");
 
 const getItems = (req, res) => {
   Item.find({})
-    .populate("owner")
     .then((items) => res.status(200).send(items))
     .catch((err) => {
       console.error(err);
