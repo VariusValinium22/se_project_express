@@ -3,6 +3,8 @@ const { JWT_SECRET } = require("../utils/config");
 const UnauthorizedError = require("../utils/errors/unauthorized-error");
 
 const authorize = (req, res, next) => {
+
+  // console.log('XXXXX HEADERS',req.headers)
   const { authorization } = req.headers;
 
   if (!authorization || !authorization.startsWith("Bearer ")) {
