@@ -1,6 +1,6 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const validator = require("validator");
+/* const validator = require("validator"); */
 const User = require("../models/user");
 const { JWT_SECRET } = require("../utils/config");
 const NotFoundError = require("../utils/errors/not-found-error");
@@ -33,10 +33,10 @@ const createUser = (req, res, next) => {
   const { name, avatar, email, password } = req.body;
 
   if (!name || !avatar || !email || !password) {
-    next(new BadRequestError("Input is not valid"));
+    return next(new BadRequestError("Input is not valid"));
   }
 
-  User.findOne({ email })
+  return User.findOne({ email })
     .then((existingUser) => {
       if (existingUser) {
         throw new ConflictError("Conflicting Error");
@@ -45,7 +45,6 @@ const createUser = (req, res, next) => {
     })
     .then((hashedPassword) => {
       if (!hashedPassword) return null;
-
       return User.create({ name, avatar, email, password: hashedPassword });
     })
     .then((user) => {
@@ -58,10 +57,9 @@ const createUser = (req, res, next) => {
     .catch((err) => {
       console.error("Error occurred in Add User request:", err);
       if (err.name === "ValidationError") {
-        next(new BadRequestError("User is not validated"));
-      } else {
-        next(err);
+        return next(new BadRequestError("User is not validated"));
       }
+      return next(err);
     });
 };
 

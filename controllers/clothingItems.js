@@ -15,10 +15,24 @@ const getItems = (req, res, next) => {
     });
 };
 
+const getItemsById = (req, res, next) => {
+  Item.findById(req.params.itemId)
+    .then((item) => {
+      if (!item) {
+        throw new NotFoundError("Item not found");
+      }
+      res.status(200).send(item);
+    })
+    .catch((err) => {
+      console.error(err);
+      next(err);
+    });
+};
+
 const createItem = (req, res, next) => {
   const { name, weather, imageUrl } = req.body;
   const owner = req.user._id;
-  console.log(req.user)
+  console.log(req.user);
 
   Item.create({ name, weather, imageUrl, owner })
     .then((item) => res.status(201).send(item))
@@ -46,18 +60,18 @@ const deleteItem = (req, res, next) => {
     .orFail()
     .then((item) => {
       if (!item.owner.equals(userId)) {
-/*         return res
+        /*         return res
           .status(Errors.FORBIDDEN_ERROR.code)
           .send({ message: Errors.FORBIDDEN_ERROR.message }); */
-          next(new ForbiddenError("Item not found"));
+        next(new ForbiddenError("Item not found"));
       }
 
       return Item.findByIdAndDelete(itemId).then((deletedItem) => {
         if (!deletedItem) {
-/*           return res
+          /*           return res
             .status(Errors.NOT_FOUND.code)
             .send({ message: Errors.NOT_FOUND.message }); */
-            next(new NotFoundError("Item not found Boogies"));
+          next(new NotFoundError("Item not found Boogies"));
         }
         return res
           .status(200)
@@ -142,7 +156,7 @@ const dislikeItem = (req, res, next) => {
           .send({ message: Errors.BAD_REQUEST.message }); */
         next(new BadRequestError("Invalid Item"));
       } else {
-      /*      return res
+        /*      return res
         .status(Errors.INTERNAL_SERVER_ERROR.code)
         .send({ message: Errors.INTERNAL_SERVER_ERROR.message }); */
         next(err);
@@ -150,4 +164,4 @@ const dislikeItem = (req, res, next) => {
     });
 };
 
-module.exports = { getItems, createItem, deleteItem, likeItem, dislikeItem };
+module.exports = { getItems, getItemsById, createItem, deleteItem, likeItem, dislikeItem };
