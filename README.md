@@ -59,3 +59,8 @@ Added API Endpoints:
 
 GitHub Page: https://github.com/VariusValinium22/se_project_express 
 FrontEnd GitHub Page: https://variusvalinium22.github.io/se_project_react/
+
+Domain Names:
+https://wtwr.flazzard.com
+https://www.wtwr.flazzard.com
+https://api.wtwr.flazzard.com
