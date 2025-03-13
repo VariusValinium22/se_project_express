@@ -6,12 +6,6 @@ const itemRouter = require("./clothingItems");
 const { createUser, login } = require("../controllers/users");
 const NotFoundError = require("../utils/errors/not-found-error");
 
-app.get('/crash-test', () => {
-  setTimeout(() => {
-    throw new Error('Server will crash now');
-  }, 0);
-});
-
 router.post("/signup", createUser);
 router.post("/signin", login);
 

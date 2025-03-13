@@ -27,6 +27,12 @@ app.use(cors());
 // Enable the requesLogger BEFORE all route handlers
 app.use(requestLogger);
 // app.use(routes);
+app.get('/crash-test', () => {
+  setTimeout(() => {
+    throw new Error('Server will crash now');
+  }, 0);
+});
+
 app.use("/", mainRouter);
 // Enable the errorLogger AFTER all route handlers
 app.use(errorLogger);
