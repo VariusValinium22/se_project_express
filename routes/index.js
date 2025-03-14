@@ -12,9 +12,7 @@ router.post("/signin", login);
 router.use("/users", authorize, userRouter);
 router.use("/items", itemRouter);
 
-// catch-all for non-existent resources
 router.use((req, res, next) => {
-  /* res.status(Errors.NOT_FOUND.code).send({ message: Errors.NOT_FOUND.message }) */
   next(new NotFoundError("Requested resource not found"));
 });
 

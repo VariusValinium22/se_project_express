@@ -2,6 +2,12 @@
 
 **GitHub Page:** [se_project_express](https://github.com/VariusValinium22/se_project_express)
 
+**Link to the fully deployed app:** [https://wtwr.flazzard.com/](https://wtwr.flazzard.com/)
+
+**Backend GitHub Page:** [https://github.com/VariusValinium22/se_project_express](https://github.com/VariusValinium22/se_project_express)
+
+**Frontend GitHub Page:** [https://variusvalinium22.github.io/se_project_react/](https://variusvalinium22.github.io/se_project_react/)
+
 ### Running the Project
 
 - `npm run start` — to launch the server
@@ -56,9 +62,6 @@ Added API Endpoints:
   - DELETE /:itemId
 
 **Technologies:** Node.js; Express.js; Mongoose; MongoDB; ESLint; Validator; Custom Middleware; Nodemon; Postman; Github Actions; CORS;
-
-GitHub Page: https://github.com/VariusValinium22/se_project_express 
-FrontEnd GitHub Page: https://variusvalinium22.github.io/se_project_react/
 
 Domain Names:
 https://wtwr.flazzard.com

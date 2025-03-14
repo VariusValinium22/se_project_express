@@ -10,7 +10,6 @@ const { requestLogger, errorLogger } = require("./middlewares/logger");
 
 const app = express();
 
-/* PORT = 3001; */
 const {PORT = 3001} = process.env;
 
 mongoose
@@ -22,17 +21,24 @@ mongoose
 
 app.use(express.json());
 
-app.use(cors());
+const corsOptions = {
+  origin: ['https://wtwr.flazzard.com', 'https://www.wtwr.flazzard.com', 'https://api.wtwr.flazzard.com'],
+  optionsSuccessStatus: 200
+};
+
+app.use(cors(corsOptions));
+
 
 // Enable the requesLogger BEFORE all route handlers
 app.use(requestLogger);
-// app.use(routes);
+
 app.get('/crash-test', () => {
   setTimeout(() => {
     throw new Error('Server will crash now');
   }, 0);
 });
 
+// app.use(routes);
 app.use("/", mainRouter);
 // Enable the errorLogger AFTER all route handlers
 app.use(errorLogger);

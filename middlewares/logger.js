@@ -1,9 +1,6 @@
 const winston = require("winston");
 const expressWinston = require("express-winston");
-const { translateAliases } = require("../models/user");
 
-// use a built-in timestamp method
-// use a generic printf method
 const messageFormat = winston.format.combine(
   winston.format.timestamp(),
   winston.format.printf(
@@ -12,10 +9,6 @@ const messageFormat = winston.format.combine(
   )
 );
 
-// Request Logger equipped with two transports:
-//   Console - logs to Terminal
-//   File - logs to a file called request.log
-// each transport accepts a format option
 const requestLogger = expressWinston.logger({
   transports: [
     new winston.transports.Console({
@@ -30,9 +23,6 @@ const requestLogger = expressWinston.logger({
 
 const errorLogger = expressWinston.errorLogger({
   transports: [
-   /*  new winston.transports.Console({
-      format: messageFormat,
-    }), */
     new winston.transports.File({
       filename: "error.log",
       format: winston.format.json(),
