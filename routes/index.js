@@ -5,9 +5,16 @@ const userRouter = require("./users");
 const itemRouter = require("./clothingItems");
 const { createUser, login } = require("../controllers/users");
 const NotFoundError = require("../utils/errors/not-found-error");
+const { validateUserSignup, validateUserSignin } = require("../middlewares/validation");
 
-router.post("/signup", createUser);
-router.post("/signin", login);
+router.get('/crash-test', () => {
+  setTimeout(() => {
+    throw new Error('Server will crash now');
+  }, 0);
+});
+
+router.post("/signup", validateUserSignup, createUser);
+router.post("/signin", validateUserSignin, login);
 
 router.use("/users", authorize, userRouter);
 router.use("/items", itemRouter);

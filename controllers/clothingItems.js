@@ -8,9 +8,6 @@ const getItems = (req, res, next) => {
     .then((items) => res.status(200).send(items))
     .catch((err) => {
       console.error(err);
-      /*       return res
-        .status(Errors.INTERNAL_SERVER_ERROR.code)
-        .send({ message: Errors.INTERNAL_SERVER_ERROR.message }); */
       next(err);
     });
 };
@@ -39,14 +36,8 @@ const createItem = (req, res, next) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
-        /*         return res
-          .status(Errors.VALIDATION_ERROR.code)
-          .send({ message: Errors.VALIDATION_ERROR.message }); */
         next(new BadRequestError("Item is not validated"));
       } else {
-        /*       return res
-        .status(Errors.INTERNAL_SERVER_ERROR.code)
-        .send({ message: Errors.INTERNAL_SERVER_ERROR.message }); */
         next(err);
       }
     });
@@ -60,17 +51,11 @@ const deleteItem = (req, res, next) => {
     .orFail()
     .then((item) => {
       if (!item.owner.equals(userId)) {
-        /*         return res
-          .status(Errors.FORBIDDEN_ERROR.code)
-          .send({ message: Errors.FORBIDDEN_ERROR.message }); */
-        next(new ForbiddenError("Item not found"));
+        return next(new ForbiddenError("Item not found"));
       }
 
       return Item.findByIdAndDelete(itemId).then((deletedItem) => {
         if (!deletedItem) {
-          /*           return res
-            .status(Errors.NOT_FOUND.code)
-            .send({ message: Errors.NOT_FOUND.message }); */
           next(new NotFoundError("Item not found Boogies"));
         }
         return res
@@ -82,23 +67,13 @@ const deleteItem = (req, res, next) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        /*  return res
-          .status(Errors.NOT_FOUND.code)
-          .send({ message: Errors.NOT_FOUND.message }); */
         next(new NotFoundError("Item was not found"));
       }
       if (err.name === "CastError") {
         next(new BadRequestError("Invalid item ID"));
-        /* return res
-          .status(Errors.BAD_REQUEST.code)
-          .send({ message: Errors.BAD_REQUEST.message }); */
-      } else {
+       } else {
         next(err);
       }
-
-      /* return res
-        .status(Errors.INTERNAL_SERVER_ERROR.code)
-        .send({ message: Errors.INTERNAL_SERVER_ERROR.message }); */
     });
 };
 
@@ -115,20 +90,12 @@ const likeItem = (req, res, next) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        /*         return res
-          .status(Errors.NOT_FOUND.code)
-          .send({ message: Errors.NOT_FOUND.message }); */
         next(new NotFoundError("Item was not found to like"));
       }
       if (err.name === "CastError") {
-        /*         return res
-          .status(Errors.BAD_REQUEST.code)
-          .send({ message: Errors.BAD_REQUEST.message }); */
         next(new BadRequestError("Invalid User"));
       } else {
-        /*       return res
-        .status(Errors.INTERNAL_SERVER_ERROR.code)
-        .send({ message: Errors.INTERNAL_SERVER_ERROR.message }); */
+
         next(err);
       }
     });
@@ -145,20 +112,11 @@ const dislikeItem = (req, res, next) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        /*         return res
-          .status(Errors.NOT_FOUND.code)
-          .send({ message: Errors.NOT_FOUND.message }); */
         next(new NotFoundError("Item was not found to dislike"));
       }
       if (err.name === "CastError") {
-        /*         return res
-          .status(Errors.BAD_REQUEST.code)
-          .send({ message: Errors.BAD_REQUEST.message }); */
         next(new BadRequestError("Invalid Item"));
       } else {
-        /*      return res
-        .status(Errors.INTERNAL_SERVER_ERROR.code)
-        .send({ message: Errors.INTERNAL_SERVER_ERROR.message }); */
         next(err);
       }
     });

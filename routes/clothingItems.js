@@ -13,10 +13,10 @@ const {
 
 router.get("/", getItems);
 router.get("/:itemId", validateId, getItemsById);
-router.post("/", authorize, createItem, validateCardBody);
+router.post("/", authorize, validateCardBody, createItem);
 router.delete("/:itemId", authorize, validateId, deleteItem);
 
-router.put("/:itemId/likes", authorize, likeItem);
+router.put("/:itemId/likes", authorize, validateId, likeItem);
 router.delete("/:itemId/likes", authorize, validateId, dislikeItem);
 
 module.exports = router;

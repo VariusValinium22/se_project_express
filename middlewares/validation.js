@@ -26,6 +26,7 @@ const validateId = celebrate({
 
 const validateCardBody = celebrate({
   body: Joi.object().keys({
+    weather: Joi.string().valid('hot', 'warm', 'cold').required(),
     name: Joi.string().required().min(2).max(30).messages({
       "string.min": `The minium length of the "name" field is 2`,
       "string.max": `The maximum length of the "name" field is 30`,
@@ -38,61 +39,20 @@ const validateCardBody = celebrate({
   }),
 });
 
-router.post(
-  "/items",
-  celebrate({
-    body: Joi.object().keys({
-      name: Joi.string().required().min(2).max(30),
-      image: Joi.string().required().custom(validateURL),
-    }),
-  }),
-  createItem
-);
-
-router.post(
-  "/users",
-  celebrate({
+const validateUserSignup = celebrate({
     body: Joi.object().keys({
       name: Joi.string().required().min(2).max(30),
       avatar: Joi.string().required().custom(validateURL),
       email: Joi.string().required().email(),
       password: Joi.string().required(),
     }),
-  }),
-  createUser
-);
+  });
 
-router.post(
-  "/signin",
-  celebrate({
+const validateUserSignin = celebrate({
     body: Joi.object().keys({
       email: Joi.string().required().email(),
       password: Joi.string().required(),
     }),
-  }),
-  login
-);
+  });
 
-router.get(
-  "/users/:id",
-/*   celebrate({
-    params: Joi.object().keys({
-      id: Joi.string().hex().length(24).required(),
-    }),
-  }), */
-  validateId,
-  getCurrentUser
-);
-
-router.get(
-  "/items/:id",
-/*   celebrate({
-    params: Joi.object().keys({
-      id: Joi.string().hex().length(24).required(),
-    }),
-  }), */
-  validateId,
-  getItems
-);
-
-module.exports = { router, validateURL, validateId, validateCardBody };
+module.exports = { router, validateURL, validateId, validateCardBody, validateUserSignup, validateUserSignin };
