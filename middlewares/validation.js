@@ -3,9 +3,6 @@ const router = require("express").Router();
 
 const validator = require("validator");
 
-const { createItem, getItems } = require("../controllers/clothingItems");
-const { getCurrentUser, createUser, login } = require("../controllers/users");
-
 const validateURL = (value, helpers) => {
   if (validator.isURL(value)) {
     return value;
@@ -55,4 +52,11 @@ const validateUserSignin = celebrate({
     }),
   });
 
-module.exports = { router, validateURL, validateId, validateCardBody, validateUserSignup, validateUserSignin };
+const validateUser = celebrate({
+  body: Joi.object().keys({
+    name: Joi.string().required().min(2).max(30),
+    avatar: Joi.string().required().custom(validateURL),
+  }),
+});
+
+module.exports = { router, validateURL, validateId, validateUser, validateCardBody, validateUserSignup, validateUserSignin };
