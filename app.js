@@ -10,7 +10,7 @@ const { requestLogger, errorLogger } = require("./middlewares/logger");
 
 const app = express();
 
-const {PORT = 3001} = process.env;
+const { PORT = 3001 } = process.env;
 
 mongoose
   .connect("mongodb://127.0.0.1:27017/wtwr_db")
@@ -22,17 +22,18 @@ mongoose
 app.use(express.json());
 
 const corsOptions = {
-  origin: ['https://wtwr.flazzard.com', 'https://www.wtwr.flazzard.com', 'https://api.wtwr.flazzard.com'],
-  optionsSuccessStatus: 200
+  origin: [
+    "https://wtwr.flazzard.com",
+    "https://www.wtwr.flazzard.com",
+    "https://api.wtwr.flazzard.com",
+  ],
+  optionsSuccessStatus: 200,
 };
 
 app.use(cors(corsOptions));
 
-
 // Enable the requesLogger BEFORE all route handlers
 app.use(requestLogger);
-
-
 
 // app.use(routes);
 app.use("/", mainRouter);
