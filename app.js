@@ -21,6 +21,10 @@ mongoose
 
 app.use(express.json());
 
+app.get("/", (req, res) => {
+  res.status(200).send("WTWR API is Running! Woot Woot");
+});
+
 const corsOptions = {
   origin: [
     "http://localhost:3000",
