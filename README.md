@@ -1,8 +1,12 @@
 ## Project Title: se_project_express
 
+**Markdown Preview: Ctrl+Shift+V**
+
 **GitHub Page:** [se_project_express](https://github.com/VariusValinium22/se_project_express)
 
-**Link to the fully deployed app:** [https://wtwr.flazzard.com/](https://wtwr.flazzard.com/)
+**Link to the fully deployed app:** ~~[https://wtwr.flazzard.com/](https://wtwr.flazzard.com/)~~  [https://wtwr.martinyoungproject.com/](https://wtwr.martinyoungproject.com/)
+
+**Deployment is NOW handled via Cloudflare Tunnel + PM2. No SCP deploy step is used.**
 
 **Backend GitHub Page:** [https://github.com/VariusValinium22/se_project_express](https://github.com/VariusValinium22/se_project_express)
 
@@ -21,8 +25,6 @@ se_project_express
 **Description:**
 This is a backend project built in association with the frontend project **_se_project_react_** for the WTWR application.
 
-Sprint 12:
-
 - utilized databases with MongoDB, set up security and testing, and deployed the web Application onto a remote machine.
 - created a server and routes for an API.
 - implemented user authorization.
@@ -37,13 +39,12 @@ There are two models, controllers and routes:
   - GET /user/:userId
   - POST /users
 - clothesItems.js API Endpoints:
+
   - GET /items
   - POST /items
   - DELETE /items/:id
   - PUT /items:id/likes
   - DELETE /items:id/likes
-
-Sprint 13:
 
 - Validation: expanded the userSchema to include email and password. Enabled validator.
   -Created login controller
@@ -64,6 +65,9 @@ Added API Endpoints:
 **Technologies:** Node.js; Express.js; Mongoose; MongoDB; ESLint; Validator; Custom Middleware; Nodemon; Postman; Github Actions; CORS;
 
 Domain Names:
-https://wtwr.flazzard.com
-https://www.wtwr.flazzard.com
-https://api.wtwr.flazzard.com
+- ~~`https://wtwr.flazzard.com`~~
+- ~~`https://www.wtwr.flazzard.com`~~
+- ~~`https://api.wtwr.flazzard.com`~~
+- `https://wtwr.martinyoungproject.com`
+- `https://apiwtwr.martinyoungproject.com`
+- NOTE: can not use deep domain hostnames on Cloudflare without paying an additional 10/mo for them!

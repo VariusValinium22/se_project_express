@@ -23,16 +23,19 @@ app.use(express.json());
 
 const corsOptions = {
   origin: [
+    "http://localhost:3000",
     "https://wtwr.flazzard.com",
     "https://www.wtwr.flazzard.com",
     "https://api.wtwr.flazzard.com",
+    "https://wtwr.martinyoungproject.com",
+    "https://apiwtwr.martinyoungproject.com",
   ],
   optionsSuccessStatus: 200,
 };
 
 app.use(cors(corsOptions));
 
-// Enable the requesLogger BEFORE all route handlers
+// Enable the requestLogger BEFORE all route handlers
 app.use(requestLogger);
 
 // app.use(routes);
