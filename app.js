@@ -39,10 +39,9 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
-// Test mode: Set req.user for test preparation
-// This is required by the test framework for endpoint testing
+// Test framework requirement: req.user must be set in app.js for prepare-test-endpoints.sh
+// This is required by Project 12's test framework
 app.use((req, res, next) => {
-  // Set req.user if not already set (test framework requirement)
   if (!req.user) {
     req.user = {
       _id: "5d8b8592978f8bd833ca8133",
