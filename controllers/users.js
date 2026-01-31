@@ -8,6 +8,37 @@ const BadRequestError = require("../utils/errors/bad-request-error");
 const ConflictError = require("../utils/errors/conflict-error");
 const UnauthorizedError = require("../utils/errors/unauthorized-error");
 
+// eslint-disable-next-line arrow-body-style
+const getUsers = (req, res, next) => {
+  return User.find({})
+    .select("-password")
+    .then((users) => {
+      res.status(200).send(users);
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+const getUserById = (req, res, next) => {
+  const { userId } = req.params;
+  return User.findById(userId)
+    .select("-password")
+    .orFail()
+    .then((user) => {
+      res.status(200).send(user);
+    })
+    .catch((err) => {
+      if (err.name === "DocumentNotFoundError") {
+        next(new NotFoundError("User was not found"));
+      } else if (err.name === "CastError") {
+        next(new BadRequestError("Invalid User"));
+      } else {
+        next(err);
+      }
+    });
+};
+
 const getCurrentUser = (req, res, next) => {
   const userId = req.user?._id;
   return User.findById(userId)
@@ -118,4 +149,4 @@ const login = (req, res, next) => {
     });
 };
 
-module.exports = { getCurrentUser, createUser, login, updateUser };
+module.exports = { getUsers, getUserById, getCurrentUser, createUser, login, updateUser };

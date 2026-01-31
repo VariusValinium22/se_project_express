@@ -16,6 +16,9 @@ router.get('/crash-test', () => {
 router.post("/signup", validateUserSignup, createUser);
 router.post("/signin", validateUserSignin, login);
 
+// POST /users route for Project 12 test compatibility (same as /signup)
+router.post("/users", validateUserSignup, createUser);
+
 router.use("/users", authorize, userRouter);
 router.use("/items", itemRouter);
 
