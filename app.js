@@ -39,17 +39,6 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
-// Test framework requirement: req.user must be set in app.js for prepare-test-endpoints.sh
-// This is required by Project 12's test framework
-app.use((req, res, next) => {
-  if (!req.user) {
-    req.user = {
-      _id: "5d8b8592978f8bd833ca8133",
-    };
-  }
-  next();
-});
-
 // Enable the requestLogger BEFORE all route handlers
 app.use(requestLogger);
 

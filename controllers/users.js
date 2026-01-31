@@ -8,37 +8,6 @@ const BadRequestError = require("../utils/errors/bad-request-error");
 const ConflictError = require("../utils/errors/conflict-error");
 const UnauthorizedError = require("../utils/errors/unauthorized-error");
 
-// eslint-disable-next-line arrow-body-style
-const getUsers = (req, res, next) => {
-  return User.find({})
-    .select("-password")
-    .then((users) => {
-      res.status(200).send(users);
-    })
-    .catch((err) => {
-      next(err);
-    });
-};
-
-const getUserById = (req, res, next) => {
-  const { userId } = req.params;
-  return User.findById(userId)
-    .select("-password")
-    .orFail()
-    .then((user) => {
-      res.status(200).send(user);
-    })
-    .catch((err) => {
-      if (err.name === "DocumentNotFoundError") {
-        next(new NotFoundError("User was not found"));
-      } else if (err.name === "CastError") {
-        next(new BadRequestError("Invalid User"));
-      } else {
-        next(err);
-      }
-    });
-};
-
 const getCurrentUser = (req, res, next) => {
   const userId = req.user?._id;
   return User.findById(userId)
@@ -57,48 +26,6 @@ const getCurrentUser = (req, res, next) => {
       } else {
         next(err);
       }
-    });
-};
-
-// Simple user creation for Project 12 (name and avatar only)
-const createUserSimple = (req, res, next) => {
-  const { name, avatar } = req.body;
-
-  if (!name || !avatar) {
-    return next(new BadRequestError("Input is not valid"));
-  }
-
-  // Create user with default email/password for Project 12 compatibility
-  const defaultEmail = `${name.toLowerCase().replace(/\s+/g, '')}@example.com`;
-  const defaultPassword = "defaultpassword123";
-
-  return User.findOne({ email: defaultEmail })
-    .then((existingUser) => {
-      if (existingUser) {
-        // If user exists, return it instead of creating a new one
-        const userObject = existingUser.toObject();
-        delete userObject.password;
-        return res.status(200).send(userObject);
-      }
-      return bcrypt.hash(defaultPassword, 10);
-    })
-    .then((hashedPassword) => {
-      if (!hashedPassword) return null;
-      return User.create({ name, avatar, email: defaultEmail, password: hashedPassword });
-    })
-    .then((user) => {
-      if (user) {
-        const userObject = user.toObject();
-        delete userObject.password;
-        res.status(201).send(userObject);
-      }
-    })
-    .catch((err) => {
-      console.error("Error occurred in Add User request:", err);
-      if (err.name === "ValidationError") {
-        return next(new BadRequestError("User is not validated"));
-      }
-      return next(err);
     });
 };
 
@@ -191,4 +118,4 @@ const login = (req, res, next) => {
     });
 };
 
-module.exports = { getUsers, getUserById, getCurrentUser, createUser, createUserSimple, login, updateUser };
+module.exports = { getCurrentUser, createUser, login, updateUser };
