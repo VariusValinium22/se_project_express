@@ -60,6 +60,48 @@ const getCurrentUser = (req, res, next) => {
     });
 };
 
+// Simple user creation for Project 12 (name and avatar only)
+const createUserSimple = (req, res, next) => {
+  const { name, avatar } = req.body;
+
+  if (!name || !avatar) {
+    return next(new BadRequestError("Input is not valid"));
+  }
+
+  // Create user with default email/password for Project 12 compatibility
+  const defaultEmail = `${name.toLowerCase().replace(/\s+/g, '')}@example.com`;
+  const defaultPassword = "defaultpassword123";
+
+  return User.findOne({ email: defaultEmail })
+    .then((existingUser) => {
+      if (existingUser) {
+        // If user exists, return it instead of creating a new one
+        const userObject = existingUser.toObject();
+        delete userObject.password;
+        return res.status(200).send(userObject);
+      }
+      return bcrypt.hash(defaultPassword, 10);
+    })
+    .then((hashedPassword) => {
+      if (!hashedPassword) return null;
+      return User.create({ name, avatar, email: defaultEmail, password: hashedPassword });
+    })
+    .then((user) => {
+      if (user) {
+        const userObject = user.toObject();
+        delete userObject.password;
+        res.status(201).send(userObject);
+      }
+    })
+    .catch((err) => {
+      console.error("Error occurred in Add User request:", err);
+      if (err.name === "ValidationError") {
+        return next(new BadRequestError("User is not validated"));
+      }
+      return next(err);
+    });
+};
+
 const createUser = (req, res, next) => {
   const { name, avatar, email, password } = req.body;
 
@@ -149,4 +191,4 @@ const login = (req, res, next) => {
     });
 };
 
-module.exports = { getUsers, getUserById, getCurrentUser, createUser, login, updateUser };
+module.exports = { getUsers, getUserById, getCurrentUser, createUser, createUserSimple, login, updateUser };

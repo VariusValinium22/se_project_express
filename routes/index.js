@@ -3,9 +3,9 @@ const { authorize } = require("../middlewares/auth");
 
 const userRouter = require("./users");
 const itemRouter = require("./clothingItems");
-const { createUser, login } = require("../controllers/users");
+const { createUser, createUserSimple, login } = require("../controllers/users");
 const NotFoundError = require("../utils/errors/not-found-error");
-const { validateUserSignup, validateUserSignin } = require("../middlewares/validation");
+const { validateUserSignup, validateUserSignin, validateUser } = require("../middlewares/validation");
 
 router.get('/crash-test', () => {
   setTimeout(() => {
@@ -16,8 +16,8 @@ router.get('/crash-test', () => {
 router.post("/signup", validateUserSignup, createUser);
 router.post("/signin", validateUserSignin, login);
 
-// POST /users route for Project 12 test compatibility (same as /signup)
-router.post("/users", validateUserSignup, createUser);
+// POST /users route for Project 12 test compatibility (name and avatar only)
+router.post("/users", validateUser, createUserSimple);
 
 router.use("/users", authorize, userRouter);
 router.use("/items", itemRouter);
